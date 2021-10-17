@@ -12,6 +12,7 @@ exports.auth = async (req, res, next) => {
     const user = await util.promisify(jwt.verify)(token, secret);
     req.user = user;
     res.locals.user = user;
+    // console.log(user);
     next();
   } catch (err) {
     console.log(err);

@@ -1,76 +1,59 @@
 <html lang="en">
+
   <head>
     <meta charset="UTF-8" />
-    <title>Home Page</title>
-    <link href="/static/css/site.css" type="text/css" rel="stylesheet" />
-    <link
-      rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-      crossorigin="anonymous"
-    />
+    <title>BookingUni</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
   </head>
 
   <body>
-    <div class="container">
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="/">Video Tutorials</a>
 
-        <ul class="navbar-nav ml-auto">
-          <!-- Guest users and Logged users -->
-          <li class="nav-item">
-            <a class="nav-link" href="/">Home </a>
-          </li>
-          {{#if user}}
-            <!-- Logged users -->
-            <li class="nav-item">
-              <a class="nav-link" href="/user/profile">Welcome, {{user.username}}</a>
-            </li>
+    <div id="container">
 
-            <li class="nav-item">
-              <a class="nav-link" href="/course/create">Create</a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link" href="/user/profile">My Profile</a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link" href="/user/logout">Logout</a>
-            </li>
-          {{else}}
-            <!-- Guest users -->
-            <li class="nav-item">
-              <a class="nav-link" href="/user/login">Login</a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link" href="/user/register">Register</a>
-            </li>
-          {{/if}}
-        </ul>
-      </nav>
       {{#if error}}
-        <!-- In case of error, you should display section with class "notifications" -->
-        <!-- You can choose to display the first error or all of them (error message/s in your opinion) -->
-        {{#each error}}
-          <section class="notifications">
-            <p class="notification-message">{{message}}</p>
-          </section>
-        {{/each}}
-      {{/if}}
-      <main>
-
-        {{{body}}}
-
-      </main>
-
-      <footer class="page-footer font-small">
-        <div class="footer-copyright text-center py-3">
-          © 2021
-          <p>Js Back End</p>
+        <div>
+          {{#each error}}
+            <div class="notification errorBox">
+              <span>{{message}}</span>
+            </div>
+          {{/each}}
         </div>
-      </footer>
+      {{/if}}
+
+      {{! <div>
+        <div class="notification loadingBox">
+          Loading …
+        </div>
+        <div class="notification infoBox">
+          <span>Info</span>
+        </div>
+      </div> }}
+
+      <nav>
+        <div class="left-container">
+          <ul>
+            <li><a href="/">Home</a></li>
+            {{#if user}}
+              <li><a href="/hotel/create">Add +</a></li>
+            {{else}}
+              <li><a href="/user/login">Login</a></li>
+              <li><a href="/user/register">Register</a></li>
+            {{/if}}
+          </ul>
+        </div>
+        {{#if user}}
+          <div class="right-container">
+            <a href="/user/profile" class="log-out">{{user.username}}</a>
+            <a href="/user/logout" class="log-out">Logout</a>
+          </div>
+        {{/if}}
+      </nav>
+
+      {{{body}}}
+
+      <footer>@SoftUni - JS Back-end - BookingUni 2020</footer>
     </div>
+
   </body>
+
 </html>

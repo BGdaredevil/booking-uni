@@ -2,6 +2,7 @@ const UserModel = require("../models/user.js");
 
 const register = async (user) => {
   return UserModel.create({
+    email: user.email,
     username: user.username,
     password: user.password,
   });
@@ -36,11 +37,15 @@ const enrollInCourse = async (courseId, userId) => {
   return user.updateOne({ $set: { enrolledList: user.enrolledList } });
 };
 
-const checkUsername = async (name) => {
-  let temp = await UserModel.findOne({ username: name }).lean();
+const checkUsername = async (str) => {
+  let temp = await UserModel.findOne({ username: str }).lean();
+  return temp != null;
+};
+const checkEmail = async (str) => {
+  let temp = await UserModel.findOne({ email: str }).lean();
   return temp != null;
 };
 
-const userService = { register, login, getUser, enrollInCourse, checkUsername };
+const userService = { register, login, getUser, enrollInCourse, checkUsername, checkEmail };
 
 module.exports = userService;

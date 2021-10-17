@@ -17,7 +17,7 @@ const register = async (req, res) => {
   };
 
   if (Object.values(escapedUser).includes("")) {
-    console.log("empty detected");
+    // console.log("empty detected");
     escapedUser.error = [{ message: "All fields are mandatory" }];
     res.render("user/register", escapedUser);
     return;
@@ -28,8 +28,8 @@ const register = async (req, res) => {
     res.render("user/register", escapedUser);
     return;
   }
-  console.log(await userService.checkUsername(escapedUser.username));
-  console.log(await userService.checkEmail(escapedUser.email));
+  // console.log(await userService.checkUsername(escapedUser.username));
+  // console.log(await userService.checkEmail(escapedUser.email));
 
   if (await userService.checkUsername(escapedUser.username)) {
     escapedUser.error = [{ message: "This username is taken" }];
@@ -88,10 +88,10 @@ const logout = (req, res) => {
   res.redirect("/");
 };
 
-//todo make profile
 const profile = async (req, res) => {
   const user = await userService.getUser(req.user.id);
-  user.enrolledList = user.enrolledList.map((l) => l.title).join(", ");
+  user.bookedHotels = user.bookedHotels.map((l) => l.name).join(", ");
+  // console.log(user);
   res.render("user/profile", user);
 };
 

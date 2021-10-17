@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const HotelSchema = new mongoose.Schema({
   name: { type: String, unique: true, minlength: [4, "Name is too short"] },
-  city: { type: String, minlength: [4, "City is too short"] },
+  city: { type: String, minlength: [3, "City is too short"] },
   imageUrl: {
     type: String,
     required: true,
@@ -30,6 +30,6 @@ HotelSchema.pre("deleteOne", function () {
   //todo fix references on delete with the user
 });
 
-const HotelModel = mongoose.model("Hotel", HotelSchema);
+const HotelModel = mongoose.model("hotel", HotelSchema);
 
 module.exports = HotelModel;

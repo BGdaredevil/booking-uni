@@ -15,7 +15,7 @@ const login = async (user) => {
       return null;
     }
     const validPass = await item.verifyPass(user.password);
-    console.log("pass is ", validPass);
+    // console.log("pass is ", validPass);
     if (validPass) {
       return item;
     } else {
@@ -28,24 +28,31 @@ const login = async (user) => {
 };
 
 const getUser = (id) => {
-  return UserModel.findById(id).populate("enrolledList", "title").lean();
+  return UserModel.findById(id).populate("bookedHotels", "name").lean();
 };
 
-const enrollInCourse = async (courseId, userId) => {
+const bookHotel = async (hotelId, userId) => {
   const user = await UserModel.findById(userId);
-  user.enrolledList.push(courseId);
-  return user.updateOne({ $set: { enrolledList: user.enrolledList } });
+  user.bookedHotels.push(hotelId);
+  return user.updateOne({ $set: { bookedHotels: user.bookedHotels } });
+};
+
+const createHotel = async (hotel) => {
+  const user = await UserModel.findById(hotel.owner);
+  user.offeredHotels.push(hotel._id);
+  return user.updateOne({ $set: { offeredHotels: user.offeredHotels } });
 };
 
 const checkUsername = async (str) => {
   let temp = await UserModel.findOne({ username: str }).lean();
   return temp != null;
 };
+
 const checkEmail = async (str) => {
   let temp = await UserModel.findOne({ email: str }).lean();
   return temp != null;
 };
 
-const userService = { register, login, getUser, enrollInCourse, checkUsername, checkEmail };
+const userService = { register, login, getUser, bookHotel, checkUsername, checkEmail, createHotel };
 
 module.exports = userService;

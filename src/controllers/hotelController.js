@@ -4,8 +4,6 @@ const { isAuth } = require("../middlewares/userMiddleware.js");
 const hotelService = require("../services/hotelService.js");
 
 const create = async (req, res) => {
-  //   console.log(req.body);
-  //   return;
   const escapedHotel = {
     name: req.body.name,
     city: req.body.city,
@@ -14,7 +12,7 @@ const create = async (req, res) => {
   };
 
   if (Object.values(escapedHotel).includes("")) {
-    console.log("empty detected");
+    // console.log("empty detected");
     escapedHotel.error = [{ message: "All fields are mandatory" }];
     res.render("course/create-course", escapedHotel);
     return;
@@ -52,60 +50,65 @@ const create = async (req, res) => {
 
 const details = async (req, res) => {
   const viewObj = {};
-  const course = await hotelService.getOne(req.params.id);
-  viewObj.course = course;
-  viewObj.isOwner = course.owner == req?.user?.id;
-  viewObj.isStudent = course.students.some((x) => x._id == req?.user?.id);
+  const hotel = await hotelService.getOne(req.params.id);
+  viewObj.hotel = hotel;
+  viewObj.isOwner = hotel.owner == req?.user?.id;
+  viewObj.isBooked = hotel.bookedList.some((x) => x._id == req?.user?.id);
+  viewObj.freeRooms = hotel.freeRooms - hotel.bookedList.length;
+  // console.log(viewObj);
   res.render("hotel/details", viewObj);
 };
 
 const loadEdit = async (req, res) => {
-  const course = await hotelService.getOne(req.params.id);
-  res.render("hotel/edit", course);
+  const hotel = await hotelService.getOne(req.params.id);
+  // console.log(hotel);
+  res.render("hotel/edit", hotel);
 };
 
 const edit = async (req, res) => {
-  const escapedCourse = {
+  const escapedHotel = {
     _id: req.params.id,
-    title: req.body.title,
-    description: req.body.description,
+    name: req.body.name,
+    city: req.body.city,
+    freeRooms: req.body.freeRooms,
     imageUrl: req.body.imageUrl,
-    isPublic: Boolean(req.body.isPublic),
   };
 
-  if (Object.values(escapedCourse).includes("")) {
-    console.log("empty detected");
-    escapedCourse.error = [{ message: "All fields are mandatory" }];
-    res.render(`hotel/edit`, escapedCourse);
+  if (Object.values(escapedHotel).includes("")) {
+    // console.log("empty detected");
+    escapedHotel.error = [{ message: "All fields are mandatory" }];
+    res.render(`hotel/edit`, escapedHotel);
     return;
   }
 
   try {
-    await hotelService.updateOne(req.params.id, escapedCourse);
+    await hotelService.updateOne(req.params.id, escapedHotel);
     res.redirect(`/hotel/details/${req.params.id}`);
   } catch (err) {
     if (
       Object.keys(err.errors).includes("imageUrl") ||
-      Object.keys(err.errors).includes("description") ||
-      Object.keys(err.errors).includes("title")
+      Object.keys(err.errors).includes("name") ||
+      Object.keys(err.errors).includes("city") ||
+      Object.keys(err.errors).includes("freeRooms")
     ) {
       const errMess = [
         err.errors.imageUrl?.message,
-        err.errors.description?.message,
-        err.errors.title?.message,
+        err.errors.name?.message,
+        err.errors.city?.message,
+        err.errors.freeRooms?.message,
       ]
         .filter((e) => e != undefined)
         .map((e) => ({ message: e }));
 
-      escapedCourse.error = errMess;
-      res.render(`hotel/edit`, escapedCourse);
+      escapedHotel.error = errMess;
+      res.render(`hotel/edit`, escapedHotel);
     } else {
       throw err;
     }
   }
 };
 
-const enroll = async (req, res) => {
+const book = async (req, res) => {
   try {
     await hotelService.join(req.params.id, req.user);
     res.redirect(`/hotel/details/${req.params.id}`);
@@ -126,11 +129,11 @@ const remove = async (req, res) => {
 router.get("/create", isAuth, (req, res) => res.render("hotel/create"));
 router.post("/create", isAuth, create);
 
-router.get("/details/:id", details);
+router.get("/details/:id", isAuth, details);
 router.get("/edit/:id", isAuth, loadEdit);
 router.post("/edit/:id", isAuth, edit);
 
-router.get("/enroll/:id", isAuth, enroll);
+router.get("/book/:id", isAuth, book);
 router.get("/delete/:id", isAuth, remove);
 
 module.exports = router;

@@ -9,7 +9,10 @@ const UserSchema = new mongoose.Schema({
     required: true,
     unique: true,
     minlength: [5, "email is too short"],
-    validate: [/^\w+@{1}\w+\.{1}[a-z]{2,3}$/i, "Email must be valid to mailbox@domain.bg/com"],
+    validate: [
+      /^[a-z0-9]+@{1}[a-z0-9]+\.{1}[a-z]{2,3}$/i,
+      "Email must be valid to mailbox@domain.bg/com",
+    ],
   },
   username: {
     type: String,
@@ -24,11 +27,11 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    // minlength: [5, "Password is too short"],
-    // validate: [
-    //   /^[a-z0-9]+$/i,
-    //   "Password must be only letters and numbers. No special characters allowed.",
-    // ],
+    minlength: [5, "Password is too short"],
+    validate: [
+      /^[a-z0-9]+$/i,
+      "Password must be only letters and numbers. No special characters allowed.",
+    ],
   },
   bookedHotels: [{ type: mongoose.Schema.Types.ObjectId, ref: "hotel" }],
   offeredHotels: [{ type: mongoose.Schema.Types.ObjectId, ref: "hotel" }],
